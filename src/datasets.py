@@ -173,10 +173,19 @@ class EventSlicer:
             return None
         return self.ms_to_idx[time_ms]
 
+from torchvision import transforms
+
+data_transforms = transforms.Compose([
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomVerticalFlip(),
+    transforms.RandomRotation(30),
+    transforms.RandomResizedCrop((480, 640), scale=(0.8, 1.0)),
+    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
+])
 
 class Sequence(Dataset):
     def __init__(self, seq_path: Path, representation_type: RepresentationType, mode: str = 'test', delta_t_ms: int = 100,
-                 num_bins: int = 4, transforms=[], name_idx=0, visualize=False, load_gt=False):
+                 num_bins: int = 4, transforms=data_transforms, name_idx=0, visualize=False, load_gt=False):
         assert num_bins >= 1
         assert delta_t_ms == 100
         assert seq_path.is_dir()
